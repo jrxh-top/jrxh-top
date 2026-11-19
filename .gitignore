@@ -1,0 +1,34 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# Astro 生成的类型与内容缓存
+.astro/
+
+# 环境变量
+.env
+.env.*
+!.env.example
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 编辑器与系统文件
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# 测试与缓存
+coverage/
+*.tsbuildinfo
+.eslintcache
+
+# 部署平台本地状态
+.vercel/

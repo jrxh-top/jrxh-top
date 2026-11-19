@@ -1,0 +1,538 @@
+---
+import { getCollection } from 'astro:content';
+import { bento, site } from '../data/site';
+
+const formatDate = (date: Date) =>
+  `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(
+    date.getDate()
+  ).padStart(2, '0')}`;
+
+const writingPosts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 2)
+  .map((post) => ({
+    title: post.data.title,
+    href: `/writing/${post.id}/`,
+    date: formatDate(post.data.date)
+  }));
+---
+
+<section class="section" id="console" aria-labelledby="console-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="section-index">01</span>
+      <h2 class="section-title" id="console-title">控制台面板</h2>
+      <span class="section-note">六块面板 · 六件事</span>
+    </div>
+
+    <div class="bento">
+      {
+        bento.map((card, i) => (
+          <article
+            class={`bento-card bento-${card.span}`}
+            id={card.id}
+            aria-labelledby={`${card.id}-title`}
+            data-reveal
+            style={`--reveal-delay: ${i * 45}ms`}
+          >
+            <span class="card-plus" aria-hidden="true">+</span>
+
+            <div class="card-meta">
+              <span class="card-index">{card.index}</span>
+              <span class="card-label">{card.label}</span>
+            </div>
+
+            <h3 class="card-title" id={`${card.id}-title`}>
+              {card.title}
+            </h3>
+
+            {card.body.map((p) => (
+              <p class="card-text">{p}</p>
+            ))}
+
+            {card.tags && (
+              <ul class="tag-list" aria-label="技术栈">
+                {card.tags.map((tag) => (
+                  <li class="tag">{tag}</li>
+                ))}
+              </ul>
+            )}
+
+            {card.now && (
+              <div class="now-box">
+                <span class="now-name">{card.now.name}</span>
+                <span class="now-why">{card.now.why}</span>
+              </div>
+            )}
+
+            {card.id === 'writing' && (
+              writingPosts.length > 0 ? (
+                <>
+                  <ul class="post-list">
+                    {writingPosts.map((post) => (
+                      <li>
+                        <a class="post-link" href={post.href}>
+                          <span class="post-date">{post.date}</span>
+                          <span class="post-title">{post.title}</span>
+                          <span class="post-arrow" aria-hidden="true">↗</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <a class="card-more" href="/writing/">
+                    全部写作
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </>
+              ) : (
+                <p class="card-text">暂无公开写作，先去折腾项目。</p>
+              )
+            )}
+
+            {card.contact && (
+              <div class="contact-row">
+                <button
+                  class="copy-btn"
+                  type="button"
+                  data-copy={card.contact.email}
+                  aria-label={`复制邮箱 ${card.contact.email}`}
+                >
+                  <span class="copy-label">{card.contact.email}</span>
+                  <span class="copy-tag">复制</span>
+                </button>
+                <ul class="link-list">
+                  {card.contact.links.map((link) => (
+                    <li>
+                      <a class="ext-link" href={link.href}>
+                        {link.label}
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <span class="copy-status" role="status" aria-live="polite" />
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 1px 间隙 + 底色 = 工程图纸式的分隔线，不再是一堆圆角卡片 */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--hairline-soft);
+    border: 1px solid var(--hairline-soft);
+  }
+
+  .bento-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 26px 24px 30px;
+    background: var(--bg);
+    transition: background-color 0.3s var(--ease);
+  }
+
+  .bento-card:hover {
+    background: var(--bg-panel);
+  }
+
+  .card-plus {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    color: #2c323f;
+    transition: color 0.25s var(--ease);
+  }
+
+  .bento-card:hover .card-plus {
+    color: var(--spark);
+  }
+
+  .bento-lg {
+    grid-column: span 4;
+  }
+
+  .bento-sm {
+    grid-column: span 2;
+  }
+
+  .bento-full {
+    grid-column: span 6;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .card-index {
+    color: var(--spark);
+  }
+
+  .card-label::before {
+    content: '/';
+    margin-right: 8px;
+    color: #313744;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 18.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+    text-wrap: balance;
+  }
+
+  .bento-lg .card-title {
+    max-width: 17ch;
+    font-size: clamp(1.55rem, 2.7vw, 2.05rem);
+    line-height: 1.4;
+  }
+
+  .card-text {
+    max-width: 48ch;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* 标签去掉胶囊边框，改成列表式的点分 */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin-top: 2px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: #a8b0c0;
+  }
+
+  .tag::before {
+    content: '·';
+    margin-right: 7px;
+    color: var(--spark);
+  }
+
+  .tag:first-child::before {
+    content: '';
+    margin-right: 0;
+  }
+
+  .now-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 2px;
+    padding-left: 14px;
+    border-left: 1px solid var(--spark-line);
+  }
+
+  .now-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--cyan);
+  }
+
+  .now-why {
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .post-link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid var(--hairline-soft);
+    transition: color 0.2s var(--ease);
+  }
+
+  .post-list li:first-child .post-link {
+    border-top: 0;
+    padding-top: 2px;
+  }
+
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+
+  .post-title {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #c3cad8;
+  }
+
+  .post-arrow {
+    font-size: 12px;
+    color: var(--faint);
+    transition: transform 0.2s var(--ease), color 0.2s var(--ease);
+  }
+
+  .post-link:hover .post-title {
+    color: var(--spark);
+  }
+
+  .post-link:hover .post-arrow {
+    color: var(--spark);
+    transform: translate(2px, -2px);
+  }
+
+  .card-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  .card-more span {
+    font-size: 11px;
+    color: var(--faint);
+  }
+
+  .card-more:hover {
+    color: var(--spark);
+    border-color: var(--spark-line);
+  }
+
+  /* 联系卡：邮箱本身就是最大的排版元素 */
+  .contact-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 28px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 0 0 7px;
+    border-bottom: 1px solid var(--hairline);
+    transition: border-color 0.2s var(--ease);
+  }
+
+  .copy-label {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.2vw, 2.3rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    transition: color 0.2s var(--ease);
+  }
+
+  .copy-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    transition: color 0.2s var(--ease);
+  }
+
+  .copy-btn:hover {
+    border-color: var(--spark-line);
+  }
+
+  .copy-btn:hover .copy-label {
+    color: var(--spark);
+  }
+
+  .copy-btn.is-done {
+    border-color: rgba(52, 211, 153, 0.5);
+  }
+
+  .copy-btn.is-done .copy-label {
+    color: var(--green);
+  }
+
+  .copy-btn.is-done .copy-tag {
+    color: var(--green);
+  }
+
+  .link-list {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .ext-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  .ext-link:hover {
+    color: var(--text);
+    border-color: var(--spark-line);
+  }
+
+  .ext-link span {
+    font-size: 10px;
+    color: var(--faint);
+  }
+
+  .copy-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--green);
+    min-height: 0;
+  }
+
+  .bento-card .copy-status {
+    position: absolute;
+    bottom: 9px;
+    left: 24px;
+    font-size: 10px;
+    color: var(--faint);
+    pointer-events: none;
+  }
+
+  .bento-full .copy-status {
+    position: static;
+  }
+
+  @media (max-width: 980px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bento-lg,
+    .bento-full {
+      grid-column: span 2;
+    }
+
+    .bento-sm {
+      grid-column: span 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bento {
+      grid-template-columns: 1fr;
+    }
+
+    .bento-lg,
+    .bento-sm,
+    .bento-full {
+      grid-column: span 1;
+    }
+
+    .bento-card {
+      padding: 22px 20px 26px;
+    }
+
+    .copy-label {
+      font-size: 1.3rem;
+    }
+
+    .bento-card .copy-status {
+      left: 20px;
+    }
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.copy-btn');
+
+  buttons.forEach((button) => {
+    const card = button.closest<HTMLElement>('.bento-card');
+    const status = card?.querySelector<HTMLElement>('.copy-status');
+    const label = button.querySelector<HTMLElement>('.copy-label');
+    const tag = button.querySelector<HTMLElement>('.copy-tag');
+    const original = button.dataset.copy ?? '';
+    let timer: number | undefined;
+
+    button.addEventListener('click', async () => {
+      let copied = false;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(original);
+          copied = true;
+        }
+      } catch {
+        copied = false;
+      }
+
+      if (copied) {
+        button.classList.add('is-done');
+        if (tag) tag.textContent = '已复制';
+        if (status) status.textContent = '✓ 邮箱已复制到剪贴板';
+      } else {
+        if (status) status.textContent = `请手动复制：${original}`;
+        if (label) {
+          const range = document.createRange();
+          range.selectNodeContents(label);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+      }
+
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        button.classList.remove('is-done');
+        if (tag) tag.textContent = '复制';
+        if (status) status.textContent = '';
+      }, 2400);
+    });
+  });
+</script>

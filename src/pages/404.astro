@@ -1,0 +1,187 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — 页面没点着 | jrxh.top</title>
+    <meta name="description" content="这个地址没有点火成功。回到 jrxh.top 控制台重新开始。" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={`${site.url}/404`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0a0c10" />
+    <meta name="color-scheme" content="dark" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <div class="shell page-shell">
+      <Header />
+
+      <main id="main" class="crash-main">
+        <div class="container crash-inner">
+          <p class="crash-eyebrow">
+            <span class="crash-dot" aria-hidden="true"></span>
+            error 404 · route not found
+          </p>
+
+          <h1 class="crash-title">
+            segmentation fault
+            <span class="crash-paren">(core dumped)</span>
+          </h1>
+
+          <div class="crash-log" aria-hidden="true">
+            <div class="log-line">
+              <span class="ps1">jrxh@top:~$</span>
+              <span>open /this-page</span>
+            </div>
+            <div class="log-line log-dim">&gt; no such file or directory</div>
+            <div class="log-line log-dim">&gt; signal SIGSEGV · 核心已转储</div>
+            <div class="log-line">
+              <span class="log-caret"></span>
+            </div>
+          </div>
+
+          <p class="crash-text">这个地址没有点火成功。回到控制台，重新来一次。</p>
+
+          <a class="btn btn-primary" href="/">
+            重新点火
+            <span class="arrow" aria-hidden="true">↺</span>
+          </a>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+
+    <style>
+      .page-shell {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .crash-main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding-block: clamp(56px, 10vw, 120px);
+      }
+
+      .crash-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .crash-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #4b5262;
+      }
+
+      .crash-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--spark);
+      }
+
+      .crash-title {
+        font-family: var(--font-display);
+        font-size: clamp(1.9rem, 4.6vw, 3.2rem);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1.25;
+        color: var(--text);
+      }
+
+      .crash-paren {
+        display: block;
+        margin-top: 6px;
+        font-family: var(--font-mono);
+        font-size: 0.5em;
+        letter-spacing: 0.02em;
+        color: var(--spark);
+      }
+
+      .crash-log {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+        max-width: 480px;
+        padding: 16px 18px;
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--bg-panel);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.9;
+      }
+
+      .log-line {
+        color: #b8c0d0;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .log-line .ps1 {
+        margin-right: 8px;
+      }
+
+      .log-dim {
+        color: #5d6478;
+      }
+
+      .log-caret {
+        display: inline-block;
+        width: 7px;
+        height: 13px;
+        background: var(--spark);
+        animation: caret 1s steps(1, end) infinite;
+        vertical-align: middle;
+      }
+
+      @keyframes caret {
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .crash-text {
+        max-width: 32em;
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .log-caret {
+          animation: none;
+          opacity: 1;
+        }
+      }
+    </style>
+  </body>
+</html>

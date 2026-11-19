@@ -1,0 +1,184 @@
+---
+import { site } from '../data/site';
+
+const isHome = Astro.url.pathname === '/';
+const topHref = isHome ? '#top' : '/#top';
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand-block">
+        <p class="footer-brand">
+          <span class="footer-name">jrxh</span><span class="footer-tld">.top</span>
+        </p>
+        <p class="footer-motto">{site.motto}</p>
+      </div>
+
+      <nav class="footer-links" aria-label="社交链接">
+        <a class="footer-link" href={site.links.github}>GitHub</a>
+        <a class="footer-link" href={site.links.x}>X</a>
+        <a class="footer-link" href={`mailto:${site.email}`}>Email</a>
+      </nav>
+
+      <a class="footer-top" href={topHref}>回到顶部 ↑</a>
+    </div>
+
+    <div class="footer-meta">
+      <span>{site.footer}</span>
+      <span>{site.role}</span>
+      <span>0 frameworks</span>
+    </div>
+
+    <p class="footer-wordmark" aria-hidden="true">
+      jrxh<span>.</span>top
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    border-top: 1px solid var(--hairline);
+    padding-top: clamp(32px, 4.4vw, 52px);
+    overflow: hidden;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: start;
+    gap: 20px 40px;
+    padding-bottom: 26px;
+  }
+
+  .footer-brand {
+    display: inline-flex;
+    align-items: flex-start;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+
+  .footer-tld {
+    margin-left: 2px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--spark);
+    transform: translateY(-7px);
+  }
+
+  .footer-motto {
+    margin-top: 7px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 6px;
+  }
+
+  .footer-link {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 3px;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  .footer-link:hover {
+    color: var(--text);
+    border-color: var(--spark-line);
+  }
+
+  .footer-top {
+    padding-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    white-space: nowrap;
+    transition: color 0.2s var(--ease);
+  }
+
+  .footer-top:hover {
+    color: var(--spark);
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 14px;
+    border-top: 1px solid var(--hairline-soft);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* 页脚水印：描边字，只留轮廓，橙色句点做唯一实色 */
+  .footer-wordmark {
+    margin: clamp(18px, 3vw, 34px) 0 -0.16em;
+    font-family: var(--font-display);
+    font-size: clamp(68px, 15vw, 200px);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .footer-wordmark span {
+    color: var(--spark);
+    -webkit-text-stroke: 0;
+  }
+
+  @supports not (-webkit-text-stroke: 1px #fff) {
+    .footer-wordmark {
+      color: rgba(255, 255, 255, 0.07);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .footer-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      padding-bottom: 22px;
+    }
+
+    .footer-links {
+      padding-top: 0;
+      gap: 18px;
+    }
+
+    .footer-top {
+      padding-top: 0;
+    }
+
+    .footer-meta {
+      gap: 6px 16px;
+    }
+
+    .footer-wordmark {
+      font-size: clamp(52px, 18vw, 120px);
+    }
+  }
+</style>
